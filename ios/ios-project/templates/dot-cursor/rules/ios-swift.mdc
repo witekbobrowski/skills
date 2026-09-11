@@ -1,0 +1,18 @@
+---
+description: Swift/iOS conventions for __DISPLAY_NAME__
+globs: "*.swift"
+alwaysApply: false
+---
+
+Canonical agent rules live in `AGENTS.md` at the repo root — read it first.
+Summary of the hard rules:
+
+- Swift 6 strict concurrency with MainActor default isolation (pinned in
+  `Config/Shared.xcconfig`) — never lower; fix the code.
+- SwiftUI Model-View only: `@State`/`@Observable`/`@Environment`/`@Binding`,
+  no ViewModels, `.task {}` for async tied to view lifecycle.
+- Swift Testing for unit tests; XCTest only in `APPNAMEUITests`.
+- Build settings → `Config/*.xcconfig`; capabilities → the entitlements file;
+  don't edit the pbxproj for settings.
+- Format with `Scripts/format.sh`; build/test with `Scripts/build.sh` and
+  `Scripts/test.sh`.

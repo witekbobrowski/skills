@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Xcode version
+        run: xcodebuild -version
+
+      - name: Lint formatting
+        run: Scripts/format.sh --check
+
+      - name: Build
+        run: Scripts/build.sh
+
+      - name: Test (unit + package, UI skipped on CI)
+        run: Scripts/test.sh --skip-ui

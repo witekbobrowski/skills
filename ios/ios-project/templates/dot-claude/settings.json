@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Scripts/build.sh:*)",
+      "Bash(Scripts/test.sh:*)",
+      "Bash(Scripts/format.sh:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(xcrun simctl list:*)",
+      "Bash(swift build:*)",
+      "Bash(swift test:*)",
+      "Bash(swift format:*)",
+      "Bash(swift package:*)"
+    ]
+  }
+}

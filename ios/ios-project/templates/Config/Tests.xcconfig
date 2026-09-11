@@ -1,0 +1,15 @@
+// Tests.xcconfig
+// UI-test bundle (APPNAMEUITests) settings.
+
+#include "Shared.xcconfig"
+
+PRODUCT_BUNDLE_IDENTIFIER = __BUNDLE_ID__
+TEST_TARGET_NAME = APPNAME
+
+// Fix duplicate module name issue
+PRODUCT_MODULE_NAME = $(PRODUCT_NAME)UITests
+
+// XCTestCase overrides (setUp, init) are nonisolated in the superclass, so a
+// MainActor default isolation cannot apply here. UI tests annotate @MainActor
+// explicitly per test method instead.
+SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated

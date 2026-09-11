@@ -1,0 +1,4 @@
+.DS_Store
+
+# Installed and rewritten by tool installers (e.g. `sentry cli setup`); not ours to version
+skills/sentry-cli/

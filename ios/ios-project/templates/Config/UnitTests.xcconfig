@@ -1,0 +1,7 @@
+// UnitTests.xcconfig
+// App unit-test bundle (APPNAMETests) — hosted in the app, Swift Testing.
+
+#include "Shared.xcconfig"
+
+PRODUCT_NAME = $(TARGET_NAME)
+PRODUCT_BUNDLE_IDENTIFIER = __BUNDLE_ID__Tests

@@ -4,8 +4,8 @@ Agent skills split out of [dotfiles](https://github.com/witekbobrowski/dotfiles)
 
 ## What's here
 
-Skills are grouped into top-level directories — `engineering/`, `ios/` —
-one directory per skill. Domain-specific skills carry a domain prefix
+Skills are grouped into top-level directories — `engineering/`, `ios/`,
+`xcode/` — one directory per skill. Domain-specific skills carry a domain prefix
 (`ios-`) and general ones don't; the prefix is what keeps names unique once
 both harnesses see them in one flat namespace (more on that below).
 
@@ -27,6 +27,31 @@ both harnesses see them in one flat namespace (more on that below).
 | `ios/ios-app-group` | Sets up an App Group in an iOS app the right way — entitlement wiring, a shared-defaults access point, store-file placement in the group container, and the migration path when adopting late. |
 | `ios/ios-swiftdata` | Wizard that designs and scaffolds a SwiftData truth-store package following Witek's proven architecture. |
 
+### Xcode (vendored from Apple)
+
+These skills are written by Apple and ship inside Xcode 27, exported via
+`xcrun agent skills export`. Copyright Apple Inc.; vendored here unchanged
+so agents launched outside Xcode (terminal, T3 Code, Codex) get them too —
+we don't edit them. The current source Xcode build is recorded in
+`xcode/VERSION`.
+
+| Skill | Description |
+|---|---|
+| `xcode/adopt-c-bounds-safety` | Guide for adopting C's `-fbounds-safety` extension: pointer annotations, build settings, and runtime violation debugging. |
+| `xcode/app-intents-specialist` | Authoritative Apple guidance on App Intents best practices — execution model, entities, queries, parameters, and more. |
+| `xcode/app-intents-whats-new-27` | New App Intents APIs, behaviors, and deprecations introduced in iOS 26 and iOS 27. |
+| `xcode/audit-xcode-security-settings` | Audits and progressively enables security-oriented Xcode build settings, compiler warnings, and static analyzer checkers. |
+| `xcode/building-document-based-swiftui-applications` | Authoritative guide for building and migrating document-based SwiftUI apps using the Document protocol (iOS 27). |
+| `xcode/device-interaction` | Verifies app behavior on device or simulator via screenshots, UI hierarchy, and touch interactions. |
+| `xcode/modernize-tests` | Modernizes test suites to use modern Swift Testing features, or migrates them from XCTest. |
+| `xcode/swiftui-specialist` | Authoritative SwiftUI best practices and performance guidance from Apple, covering animation, Environment, Observable, and more. |
+| `xcode/swiftui-whats-new-27` | New SwiftUI APIs, behaviors, and deprecations introduced in the 2027 OS releases (iOS 27 and aligned platforms). |
+| `xcode/uikit-app-modernization` | Modernizes UIKit apps for multi-window environments by replacing legacy shared-state APIs with modern alternatives. |
+
+`audit-xcode-security-settings` assumes Xcode's MCP tools (`XcodeGlob`,
+`XcodeRead`, etc.) are present and falls back to plain guidance when run
+outside Xcode.
+
 ## How it's wired
 
 Two symlinks, both created by `dotfiles/symlink/symlink.sh`:
@@ -40,6 +65,8 @@ discovers skills one level deep, so the farm is what gives both harnesses a
 single flat directory while the real files live grouped. Edit a `SKILL.md`
 in its group directory and both harnesses see it immediately; adding,
 renaming, or removing a skill needs a `./link.sh` run to update the farm.
+`xcode/` is a group like the others and gets farmed by `./link.sh` the
+same as `engineering/` and `ios/`.
 
 Tool-installed skills (right now `sentry-cli`, dropped in by the Sentry CLI
 installer) live straight in `skills/` and are gitignored — not mine to
@@ -52,3 +79,12 @@ version.
 3. Commit.
 
 Keep the body harness-neutral — no Claude- or Codex-specific tool names in prose. Push long or reference-y material into `<group>/<name>/references/`, and any scaffolding into `scripts/` or `templates/`.
+
+## Updating the Xcode skills
+
+After installing a new Xcode, run `./sync-xcode-skills.sh`. It re-exports
+Apple's skills, removes any that Apple dropped, rewrites `xcode/VERSION`,
+and re-runs `./link.sh` for you — the export tool requires an absolute
+`--output-dir` and `--replace-existing`, and the script already handles
+both. Review `git diff xcode/` to see what Apple changed, then commit with
+a message like `xcode: sync skills from Xcode 27.1 (27B...)`.

@@ -46,7 +46,7 @@ we don't edit them. The current source Xcode build is recorded in
 | `xcode/modernize-tests` | Modernizes test suites to use modern Swift Testing features, or migrates them from XCTest. |
 | `xcode/swiftui-specialist` | Authoritative SwiftUI best practices and performance guidance from Apple, covering animation, Environment, Observable, and more. |
 | `xcode/swiftui-whats-new-27` | New SwiftUI APIs, behaviors, and deprecations introduced in the 2027 OS releases (iOS 27 and aligned platforms). |
-| `xcode/uikit-app-modernization` | Modernizes UIKit apps for multi-window environments by replacing legacy shared-state APIs with modern alternatives. |
+| `xcode/app-resizability` | Adapts an app to windows that resize while running (Stage Manager, split screen, iPhone Duo) by replacing legacy shared-state APIs: mainScreen, interfaceOrientation, userInterfaceIdiom, app/scene lifecycle, safe areas. |
 
 `audit-xcode-security-settings` assumes Xcode's MCP tools (`XcodeGlob`,
 `XcodeRead`, etc.) are present and falls back to plain guidance when run

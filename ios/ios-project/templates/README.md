@@ -18,7 +18,7 @@ This repo includes **opinionated rules files** for AI coding assistants:
 
 What makes them opinionated: no ViewModels (pure SwiftUI state management), Swift 6+ concurrency, Swift Testing over XCTest, @Observable over @Published.
 
-**Note for AI assistants**: read the relevant rules files before making changes.
+AI assistants should read the relevant rules files before making changes.
 
 ## Project Architecture
 

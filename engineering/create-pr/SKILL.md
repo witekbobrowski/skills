@@ -4,7 +4,7 @@ description: Open a pull request whose title and description follow the repo's c
 allowed-tools: Bash(gh:*), Bash(git:*), Bash(cat:*), Bash(find:*), Bash(grep:*), Read, Glob, Grep
 ---
 
-# Create Pull Request — Follow Repo Conventions
+# Create Pull Request: Follow Repo Conventions
 
 ## Step 1: Check branch state
 
@@ -93,7 +93,7 @@ If the user passed text along with the invocation, use it as the basis for the t
 
 If a **PR template exists**, fill it in properly:
 - Fill every section with real content relevant to this PR
-- Remove sections that genuinely don't apply (e.g. "Screenshots" for a backend-only change) rather than writing "N/A" everywhere
+- Remove sections that don't apply (e.g. "Screenshots" for a backend-only change) rather than writing "N/A" everywhere
 - Don't leave template placeholders or instructions in the final output
 
 If **no template exists**, write a description with:
@@ -136,4 +136,4 @@ gh pr create \
 
 After creation, print the PR URL.
 
-Do NOT add reviewers or labels unless I ask. Do NOT auto-merge or mark as ready if it's a draft. If the user included "draft" in the invocation, create it as a draft with `--draft`.
+Don't add reviewers or labels unless I ask. Don't auto-merge or mark as ready if it's a draft. If the user included "draft" in the invocation, create it as a draft with `--draft`.

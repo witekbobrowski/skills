@@ -1,11 +1,11 @@
 ---
 name: ios-app-group
-description: Sets up an App Group in an iOS app the right way — entitlement wiring, a shared-defaults access point, store-file placement in the group container, and the migration path when adopting late. Use when the user wants to add an App Group, share data with a widget or extension, move UserDefaults or store files to a shared container, or asks where app data should live.
+description: Sets up an App Group in an iOS app: entitlement wiring, a shared-defaults access point, store-file placement in the group container, and the migration path when adopting late. Use when the user wants to add an App Group, share data with a widget or extension, move UserDefaults or store files to a shared container, or asks where app data should live.
 ---
 
 # App Group Wizard
 
-Adopt an App Group the way Witek's apps do it — extracted from `floda-ios`
+Adopt an App Group the way Witek's apps do it: extracted from `floda-ios`
 (2026-08-21: `AppGroup.swift`, the entitlements change, and the
 preferences sweep). The governing idea:
 
@@ -16,7 +16,7 @@ preferences sweep). The governing idea:
 > entirely. (Stoic precedent: its App Group store is what made
 > share-extension writes possible.)
 
-Adopt on day one whenever widgets/extensions are *plausible* — not only
+Adopt on day one whenever widgets/extensions are *plausible*, not only
 when they're planned. The cost of adopting early is near zero; the cost of
 adopting late is a migration.
 
@@ -25,25 +25,25 @@ adopting late is a migration.
 Part of the iOS project skill suite. `ios-project` applies the
 entitlement at scaffold time when App Groups is a selected capability
 (its `references/capabilities.md`); `ios-swiftdata` decides that store
-files belong in the group container — this skill owns the wiring both of
+files belong in the group container. This skill owns the wiring both of
 them assume.
 
-## Phase 1 — Interview (short)
+## Phase 1: Interview (short)
 
-- **Identifier** — convention: `group.<bundle-id>` (floda:
+- **Identifier**: `group.<bundle-id>` by convention (floda:
   `group.dev.bobrowski.Floda`). iOS group IDs must start with `group.`.
   Confirm rather than invent.
-- **What moves into the group** — usually both: user-visible preferences
-  (shared `UserDefaults`) and store files. Secrets do not — those are
+- **What moves into the group**: usually both user-visible preferences
+  (shared `UserDefaults`) and store files. Secrets do not: those are
   Keychain access groups, a separate capability.
-- **Which targets** — today usually just the app; every future
+- **Which targets**: today usually just the app; every future
   widget/extension target adds the same group to its own entitlements
   file.
-- **Has the app shipped?** — decides the migration path in Phase 3.
+- **Has the app shipped?**: decides the migration path in Phase 3.
 
-## Phase 2 — Wiring
+## Phase 2: Wiring
 
-1. **Entitlement** — in xcconfig-driven repos this goes in
+1. **Entitlement**: in xcconfig-driven repos this goes in
    `Config/<App>.entitlements`, never the pbxproj:
 
    ```xml
@@ -55,7 +55,7 @@ them assume.
    portal on next build. Extension targets repeat the key in their own
    entitlements file.
 
-2. **One access point** — a small enum, not scattered
+2. **One access point**: a small enum, not scattered
    `UserDefaults(suiteName:)` calls (floda:
    `Floda/Dependencies/AppGroup.swift`):
 
@@ -78,14 +78,14 @@ them assume.
    `preconditionFailure`, not graceful fallback: silently falling back to
    `.standard` would fork user data into two containers.
 
-3. **Sweep every consumer** — replace all `UserDefaults.standard` reads
+3. **Sweep every consumer**: replace all `UserDefaults.standard` reads
    *and* writes with `AppGroup.defaults` in the same change; a partial
    sweep forks the data. Types that take defaults keep injecting them for
    testability (`init(defaults: UserDefaults = AppGroup.defaults)`), and
    `@AppStorage` needs the explicit store:
    `@AppStorage("key", store: AppGroup.defaults)`.
 
-4. **Store files** — resolve the container and give the database factory
+4. **Store files**: resolve the container and give the database factory
    a production entry point so call sites can't get the path wrong:
 
    ```swift
@@ -95,17 +95,17 @@ them assume.
    let storeDirectory = container.appending(path: "Store/")
    ```
 
-   Use a subdirectory (floda: `Store/`), not the container root — the OS
+   Use a subdirectory (floda: `Store/`), not the container root; the OS
    also writes into the container. Keep **one store across build
    environments**: debug dogfood data carrying into a TestFlight install
    is a feature; environment isolation belongs in sync bookkeeping, not
    in truth (see ios-swiftdata's `references/sync-readiness.md`
-   § Environments — partition per environment only if debug builds
+   § Environments; partition per environment only if debug builds
    fabricate synthetic records into the real store). Expose
-   `Database.make(appGroup:)` (or equivalent) as *the* production
+   `Database.make(appGroup:)` (or equivalent) as the production
    constructor; the plain `make(directory:)` stays for tests.
 
-## Phase 3 — Migration path
+## Phase 3: Migration path
 
 - **Not shipped yet (the good case):** no migration. Existing dev-device
   settings reset once; say so in the commit message (floda: "Pre-ship,
@@ -114,10 +114,10 @@ them assume.
   anything opens the store:
   1. Defaults: if a `migratedToAppGroup` flag is unset in the group
      defaults, copy the known keys from `.standard`, then set the flag.
-     Copy specific keys — never the whole dictionary (system keys ride
+     Copy specific keys, never the whole dictionary (system keys ride
      along).
   2. Store files: if the old store exists and the new one does not,
-     **move** (never copy-and-leave-both — two live copies is the worst
+     **move** (never copy-and-leave-both: two live copies is the worst
      outcome) the store and its `-wal`/`-shm` siblings together, before
      the first container open. A crash mid-migration must resolve on next
      launch by re-checking existence, not by a half-set flag.
@@ -132,16 +132,16 @@ them assume.
   via `WidgetCenter.shared.reloadTimelines`; real cross-process signaling
   is Darwin notifications.
 - Two processes and one SwiftData/SQLite store: safe at the file level
-  (WAL), but keep one writer — the app writes, extensions read (widgets
+  (WAL), but keep one writer: the app writes, extensions read (widgets
   best read pre-computed snapshots). Never assume an extension sees
   in-memory state.
 - Extensions are separate bundles: each needs its own
-  `PrivacyInfo.xcprivacy` — UserDefaults use (CA92.1) must be declared
+  `PrivacyInfo.xcprivacy`; UserDefaults use (CA92.1) must be declared
   there too.
 - File protection: background writes while the device is locked need
-  `CompleteUntilFirstUserAuthentication` on the store files — a
+  `CompleteUntilFirstUserAuthentication` on the store files, a
   deliberate, documented trade.
-- macOS App Groups use a team-ID prefix instead of `group.` — this skill
+- macOS App Groups use a team-ID prefix instead of `group.`. This skill
   is iOS-scoped; flag it if a Mac target appears.
 
 ## Verification

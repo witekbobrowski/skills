@@ -1,6 +1,6 @@
 # __DISPLAY_NAME__ — Product vision
 
-<!-- The wizard fills this in from the interview. Keep every section — a vision
+<!-- The wizard fills this in from the interview. Keep every section; a vision
      doc that skips "The problem" or "Non-goals" stops being useful. -->
 
 **__DISPLAY_NAME__** — __ONE_LINE_PITCH__

@@ -1,6 +1,6 @@
-# APPNAME — Claude Code rules
+# APPNAME: Claude Code rules
 
-**Read [`AGENTS.md`](AGENTS.md) first — it is the canonical agent
+**Read [`AGENTS.md`](AGENTS.md) first: it is the canonical agent
 documentation** (commands, hard rules, layout, docs reading order). This file
 only adds detail that Claude Code specifically needs. When the two disagree,
 `AGENTS.md` wins; fix the discrepancy.
@@ -40,7 +40,7 @@ struct ItemListView: View {
 - Feature-local services: plain `let` properties of an `@Observable` type.
 - Bindings into `@Observable` objects: `@Bindable`.
 - View states: model as an `enum` (`.loading` / `.loaded` / `.error`).
-- When a view grows: split into subviews and compose — never add a ViewModel.
+- When a view grows: split into subviews and compose, never add a ViewModel.
 
 ## Concurrency
 
@@ -54,26 +54,26 @@ never GCD.
 
 Swift Testing (`@Test`, `#expect`, `#require`, parameterized tests) in
 `APPNAMETests` (app-target logic) and `Packages/Modules/Tests` (module
-logic). The UI bundle is one launch smoke test — keep it that way. Test
+logic). The UI bundle is one launch smoke test; keep it that way. Test
 services directly; verify views with previews and the running app, not
 view-inspection tests.
 
 ## Changing the project
 
-- New source files: just create them on disk — synchronized folder groups
+- New source files: create them on disk; synchronized folder groups
   pick them up. No pbxproj edits.
 - Identity/build settings → `Config/*.xcconfig`. Capabilities →
   `Config/APPNAME.entitlements` (+ usage-description keys in
   `Shared.xcconfig`). The pbxproj is only touched to add whole targets.
 - New shared/integration code → new target in `Packages/Modules/Package.swift`
   (pattern is commented in the manifest) + entry in the app's xctestplan.
-- Persistence: prefer none; if truly needed, SwiftData (never CoreData),
-  UserDefaults for simple preferences — and update
+- Persistence: prefer none; if needed, SwiftData (never CoreData),
+  UserDefaults for simple preferences, and update
   `Resources/PrivacyInfo.xcprivacy` if new required-reasons APIs come in.
 
 ## Verification bar
 
 Before declaring a change done: `Scripts/format.sh --check`,
 `Scripts/build.sh`, and the relevant slice of `Scripts/test.sh` must pass.
-Use XcodeBuildMCP (build/run/screenshot/describe_ui) to actually see UI
+Use XcodeBuildMCP (build/run/screenshot/describe_ui) to see UI
 changes on a simulator instead of reasoning about them.

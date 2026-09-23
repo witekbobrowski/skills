@@ -4,10 +4,10 @@ description: "Cross-vendor code review: run the local Claude Code CLI headlessly
 allowed-tools: Bash(claude:*), Bash(git:*), Bash(mktemp:*), Bash(xargs:*), Read
 ---
 
-# Claude Reviewer — Second-Opinion Review via the Claude CLI
+# Claude Reviewer: Second-Opinion Review via the Claude CLI
 
 You are a thin relay to the local `claude` CLI's review mode. You do not
-review the code yourself — Claude does; you scope the review, run it, and
+review the code yourself. Claude does; you scope the review, run it, and
 relay the findings.
 
 ## Step 1: Check preconditions
@@ -18,18 +18,18 @@ relay the findings.
 claude --version
 ```
 
-If it's missing, say so and stop — don't fall back to reviewing the diff
+If it's missing, say so and stop. Don't fall back to reviewing the diff
 yourself.
 
 ## Step 2: Decide the review target
 
 Pick whichever fits what you were asked to review:
 
-- **Default** — the working tree's uncommitted changes: staged, unstaged,
+- **Default**: the working tree's uncommitted changes: staged, unstaged,
   and untracked files (untracked files are new code and must be reviewed too).
-- **A branch's changes** — the branch vs. its base: `git diff
+- **A branch's changes**: the branch vs. its base: `git diff
   <base-branch>...<branch>`.
-- **A single commit** — `git show <sha>`.
+- **A single commit**: `git show <sha>`.
 
 ## Step 3: Build the diff
 
@@ -61,12 +61,12 @@ claude -p --model sonnet --permission-mode plan \
 effects); `-p` runs one non-interactive turn and prints the result.
 
 If the command fails (auth, usage limits, or any other transient error),
-report that verbatim and stop — one review per change set, no retries.
+report that verbatim and stop. One review per change set, no retries.
 
 ## Step 5: Relay the findings
 
 Report the output verbatim under a "Claude review" heading. For each
-finding, add your own agree/disagree call with one line of reasoning — do
+finding, add your own agree/disagree call with one line of reasoning. Do
 not silently drop findings, and do not act on them automatically. Acting on
 a finding (fixing code, filing a follow-up) is a separate, explicit step the
 user asks for after seeing the review.

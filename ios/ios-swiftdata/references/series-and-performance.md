@@ -1,14 +1,14 @@
 # Heavy series data and the performance charter
 
 Applies when the domain has high-frequency per-entity data (GPS tracks,
-sensor streams, samples). The floda numbers are kept as sanity anchors —
+sensor streams, samples). The floda numbers are kept as sanity anchors;
 recompute them for the target domain.
 
 ## The series-blob pattern
 
 Never row-per-sample entities. Queryable **summary scalars live as columns**
 on the truth entity; full time series live as **versioned packed-binary
-blobs** with `@Attribute(.externalStorage)` on a **separate 1→1 entity** —
+blobs** with `@Attribute(.externalStorage)` on a **separate 1→1 entity**:
 hot rows stay narrow, and list queries never fault blob data.
 
 Shape: one series row per (entity, channel):
@@ -31,14 +31,14 @@ public struct WorkoutSeries: Identifiable, Hashable, Sendable, Codable {
 }
 ```
 
-- **Channel is a string** — new channels (power, cadence, …) need no schema
+- **Channel is a string**: new channels (power, cadence, …) need no schema
   migration; loading one channel never faults another.
-- **Payloads are immutable values** — replaced wholesale, never patched.
+- **Payloads are immutable values**: replaced wholesale, never patched.
   Any edit is decode → transform → re-encode (new contentHash, bumped
   updatedAt and change counter). `contentHash` gives cheap change detection
   and a fingerprint input.
 - Structs carry **descriptors only**; payload `Data` crosses the actor
-  boundary raw and is decoded by pure value codecs *off* the actor — blobs
+  boundary raw and is decoded by pure value codecs *off* the actor; blobs
   never ride struct mapping.
 
 ## Packed binary conventions (v1)
@@ -49,27 +49,27 @@ public struct WorkoutSeries: Identifiable, Hashable, Sendable, Codable {
   over-wide final bytes when decoding.
 - **Time**: offsets from the entity's start in milliseconds; first sample
   absolute, subsequent samples delta to the previous. **One time encoding
-  across all channels** — split/merge rebases every channel (and structural
+  across all channels**: split/merge rebases every channel (and structural
   segments) with the same code path.
 - **Values**: delta-encoded on a per-channel quantization grid chosen below
   measurement accuracy (floda: 1e-7° for lat/lon ≈ 1.1 cm, 0.1 m altitude,
-  0.1 bpm, 0.01 m/s) — practically lossless, ~4× smaller than naive
+  0.1 bpm, 0.01 m/s): practically lossless, ~4× smaller than naive
   Float64 tuples.
 - **Presence flags are all-or-nothing per field**: set only when every
   sample carries the field; mixed presence drops that field.
 - **Tolerance**: decoders tolerate trailing unknown bytes (minor extensions
   ride flags); unknown `formatVersion` → payload preserved untouched and
-  surfaced as undecodable — never dropped, never crashes. Unknown enum
+  surfaced as undecodable; never dropped, never crashes. Unknown enum
   kinds inside payloads survive a decode→encode cycle.
 - Map provider sentinel values (e.g. CLLocation's negative "invalid"
   accuracies) to nil *before* encoding.
 - **Self-sufficiency test for field selection**: if a field is not
-  re-derivable and the source cache is wipeable, it belongs in truth —
+  re-derivable and the source cache is wipeable, it belongs in truth:
   drop nothing you cannot recompute (floda learned this with GPS
   accuracy/speed/course).
 
 Structural segments (laps, intervals, pauses, markers, multisport legs)
-are just another channel — packed `{kind, startOffset, duration, label?,
+are just another channel, packed `{kind, startOffset, duration, label?,
 legType?}` entries sharing the offset encoding. Pause entries ground
 moving-time duration (`moving = elapsed − Σ pause`); a multisport session
 is one truth entity with typed leg segments.
@@ -105,7 +105,7 @@ versioned from v1:
 ## Base units
 
 All stored scalars in fixed base units (meters, seconds, kilocalories,
-bpm — pick the domain's set once). Conversion happens only in the
+bpm; pick the domain's set once). Conversion happens only in the
 formatting layer, never in storage. This is what makes fingerprints,
 rollups, and cross-provider comparison trivial.
 
@@ -114,19 +114,19 @@ rollups, and cross-provider comparison trivial.
 Write it down with the target envelope (floda: ~25k entities = 2/day ×
 30+ years). Row count is never the threat; these invariants are:
 
-1. **Hot rows stay narrow** — blobs on the separate series entity; list
+1. **Hot rows stay narrow**: blobs on the separate series entity; list
    queries never fault blob bytes.
-2. **Entities scale O(records), never O(samples)** — features add summary
+2. **Entities scale O(records), never O(samples)**: features add summary
    columns, blob channels, or derived entities; never sample tables.
-3. **Rollups, not scans** — stats read incrementally-maintained rollup
+3. **Rollups, not scans**: stats read incrementally-maintained rollup
    entities (period × type), updated on ingest/edit via the change
    counter, rebuildable offline, living in the wipeable configuration. No
    feature scans full history on demand.
-4. **Migrations are O(1) at launch** — lightweight-only; heavy transforms
+4. **Migrations are O(1) at launch**: lightweight-only; heavy transforms
    ride the blob format byte.
 5. **Every query pattern ships with its `#Index`**; UI reads are windowed,
    never whole-store arrays.
-6. **The guarantee is a fixture** — a deterministic (seeded) synthetic
+6. **The guarantee is a fixture**: a deterministic (seeded) synthetic
    generator at the envelope size, built through the *public ingest API*
    (so it doubles as a soak test), written once per test process and
    reused. Timing budgets are named tests (feed first page, cold open,

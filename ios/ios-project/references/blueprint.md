@@ -63,14 +63,14 @@ app; the templates in `../templates/` are the executable form of this document.
   `@Environment`/`@Binding`; business logic in services.
 - **Swift 6 language mode from day one**: `SWIFT_VERSION = 6.0`,
   `SWIFT_APPROACHABLE_CONCURRENCY = YES`,
-  `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor` — all in `Shared.xcconfig`,
+  `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`, all in `Shared.xcconfig`,
   never in the pbxproj, never lowered.
 - **Swift Concurrency only**; MainActor default isolation covers UI.
 - **Swift Testing** for unit tests (app `<AppName>Tests` bundle + package
   test targets); XCTest only for the UI-test bundle, which stays one launch
   smoke test asserting the `root-view` accessibility identifier.
 - **swift-format owns style** (`.swift-format`, `Scripts/format.sh`); prose
-  style rules were deleted on purpose — don't reintroduce them.
+  style rules were deleted on purpose. Don't reintroduce them.
 - **`AGENTS.md` is the canonical rules file**; `CLAUDE.md`, Cursor, and
   Copilot files are thin pointers. Update AGENTS.md, not four files.
 - **Canonical commands in `Scripts/`** (`build.sh`, `test.sh [--skip-ui]`,
@@ -81,7 +81,7 @@ app; the templates in `../templates/` are the executable form of this document.
 - **App-specific orchestration in the app target**, shared UI in
   `DesignSystem`, external-system I/O in `Integrations/<Name>`.
 - **Conventional Commits**; decisions recorded as ADRs.
-- The workspace file-refs order: `Docs`, `Packages/Modules`, project — keeps
+- The workspace file-refs order: `Docs`, `Packages/Modules`, project. This keeps
   docs and package browsable in Xcode.
 
 ## Deliberate quirks worth knowing
@@ -98,9 +98,9 @@ app; the templates in `../templates/` are the executable form of this document.
   so app-target stores are testable; if logic is hard to test there, move it
   into the package.
 - `Resources/` also carries `PrivacyInfo.xcprivacy` (UserDefaults/CA92.1
-  declared — effectively every app needs it) and `Localizable.xcstrings`.
+  declared: effectively every app needs it) and `Localizable.xcstrings`.
 - The template pbxproj keeps floda's original object IDs (`8B41F6…`). That is
-  harmless — IDs only need to be unique within one project file.
+  harmless: IDs only need to be unique within one project file.
 - Xcode may add `<AppName>.xcworkspace/xcshareddata/swiftpm` state on first
   open; it's gitignored territory, leave it alone.
 
@@ -109,4 +109,4 @@ app; the templates in `../templates/` are the executable form of this document.
 - Package targets build & test fast in isolation (`Modules-Package` scheme).
 - Strict concurrency and API discipline are enforced at module boundaries.
 - The app project stays a thin shell, so pbxproj churn (the classic merge
-  nightmare) is near zero — synchronized groups + xcconfig do the rest.
+  nightmare) is near zero: synchronized groups + xcconfig do the rest.

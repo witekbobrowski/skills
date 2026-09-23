@@ -4,7 +4,7 @@ description: Stage and commit the current changes following the repo's commit me
 allowed-tools: Bash(gh:*), Bash(git:*), Bash(cat:*), Bash(grep:*), Read, Glob, Grep
 ---
 
-# Commit — Follow Repo Conventions
+# Commit: Follow Repo Conventions
 
 ## Step 1: Understand what changed
 
@@ -49,7 +49,7 @@ Identify the pattern:
 ## Step 3: Write the commit message
 
 Write a commit message that:
-1. **Matches the detected style exactly** -- don't invent a new convention
+1. **Matches the detected style** -- don't invent a new convention
 2. **Describes what changed and why**, not just which files were touched
 3. **Is concise** -- if a one-liner is the repo norm, keep the subject line short
 4. **Includes a body** when the change isn't completely obvious from the subject line alone. A sentence or two explaining the why is almost always worth it. Don't pad it -- if the subject says everything, skip the body.
@@ -62,6 +62,6 @@ If the user passed a message along with the invocation, use it as the commit mes
 git commit -m "[subject line]" -m "[body]"
 ```
 
-Skip the body only if the change is truly trivial (typo fix, version bump, etc.) or if the repo's contributing guidelines explicitly prohibit commit bodies.
+Skip the body only if the change is trivial (typo fix, version bump, etc.) or if the repo's contributing guidelines explicitly prohibit commit bodies.
 
-Do NOT push unless I ask.
+Don't push unless asked.

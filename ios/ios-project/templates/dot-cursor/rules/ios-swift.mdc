@@ -4,11 +4,11 @@ globs: "*.swift"
 alwaysApply: false
 ---
 
-Canonical agent rules live in `AGENTS.md` at the repo root — read it first.
+Canonical agent rules live in `AGENTS.md` at the repo root; read it first.
 Summary of the hard rules:
 
 - Swift 6 strict concurrency with MainActor default isolation (pinned in
-  `Config/Shared.xcconfig`) — never lower; fix the code.
+  `Config/Shared.xcconfig`); never lower it, fix the code instead.
 - SwiftUI Model-View only: `@State`/`@Observable`/`@Environment`/`@Binding`,
   no ViewModels, `.task {}` for async tied to view lifecycle.
 - Swift Testing for unit tests; XCTest only in `APPNAMEUITests`.

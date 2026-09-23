@@ -1,4 +1,4 @@
-# APPNAME — agent notes
+# APPNAME: agent notes
 
 **This file is the canonical agent documentation for this repo.** Other rules
 files (`CLAUDE.md`, `.cursor/rules/`, `.github/copilot-instructions.md`) defer
@@ -6,7 +6,7 @@ to it.
 
 ## Commands
 
-Use the canonical scripts — don't hand-roll xcodebuild invocations:
+Use the canonical scripts instead of hand-rolling xcodebuild invocations:
 
 | Command | What it does |
 |---|---|
@@ -43,12 +43,12 @@ format-check, build, and non-UI tests on every PR.
 
 ## Identity
 
-- Bundle ID **`__BUNDLE_ID__`**, team **`__TEAM_ID__`** — both in
-  `Config/Shared.xcconfig`.
+- Bundle ID **`__BUNDLE_ID__`**, team **`__TEAM_ID__`** (both in
+  `Config/Shared.xcconfig`).
 - App unit tests: `__BUNDLE_ID__Tests` (`Config/UnitTests.xcconfig`);
   UI tests: `Config/Tests.xcconfig`.
 
-## Layout — what goes where
+## Layout: what goes where
 
 - **`APPNAME/`** (app target): screens, app-specific stores/orchestration,
   dependency wiring in `APPNAMEApp.swift`. Keep it a thin shell.
@@ -58,24 +58,24 @@ format-check, build, and non-UI tests on every PR.
 - **`Packages/Modules` → `Sources/DesignSystem`**: shared SwiftUI primitives.
   No app-specific business logic.
 - **`Packages/Modules` → `Sources/Integrations/<Name>`**: one target per
-  external system — only external I/O and `Sendable` mirrors. App rules stay
+  external system: only external I/O and `Sendable` mirrors. App rules stay
   in the app target. Tests in `Packages/Modules/Tests/<Name>Tests`.
 - **`APPNAME/Resources/`**: asset catalog, `PrivacyInfo.xcprivacy` (update it
   when adopting required-reasons APIs or adding data collection),
-  `Localizable.xcstrings` (string catalog — user-facing strings go here).
+  `Localizable.xcstrings` (string catalog, user-facing strings go here).
 - The project uses Xcode 16 synchronized folder groups: **adding a file on
-  disk adds it to the target** — no pbxproj edit needed.
+  disk adds it to the target**, no pbxproj edit needed.
 
 ## Documentation
 
 Read before large changes in the matching area:
 
-- [`Docs/product/vision.md`](Docs/product/vision.md) — product north star and tone.
-- [`Docs/architecture/overview.md`](Docs/architecture/overview.md) — layers, state story.
-- [`Docs/adr/`](Docs/adr/) — decisions; add `NNNN-title.md` when you settle one.
+- [`Docs/product/vision.md`](Docs/product/vision.md): product north star and tone.
+- [`Docs/architecture/overview.md`](Docs/architecture/overview.md): layers, state story.
+- [`Docs/adr/`](Docs/adr/): decisions; add `NNNN-title.md` when you settle one.
 
 ## Device caveats
 
 Some capabilities only work on a physical device (HealthKit background
 delivery, push notifications). Simulator-only verification is incomplete for
-those paths — say so when reporting results.
+those paths; say so when reporting results.

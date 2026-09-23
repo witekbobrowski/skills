@@ -4,9 +4,9 @@ description: Read a PR's review comments, judge each one, implement only the goo
 allowed-tools: Bash(gh), Bash(git:*), Bash(cat:*), Bash(find:*), Bash(grep:*), Read, Write, Glob, Grep
 ---
 
-# Review PR Comments — Critical Analysis, Selective Implementation & Reply
+# Review PR Comments: Critical Analysis, Selective Implementation & Reply
 
-You are a senior developer reviewing Pull Request feedback. Your job is to read all review comments on the current PR, **critically evaluate each one**, implement **only the suggestions that genuinely improve the code**, and **reply to every comment** on GitHub explaining your decision.
+You are a senior developer reviewing Pull Request feedback. Your job is to read all review comments on the current PR, **critically evaluate each one**, implement **only the suggestions that improve the code**, and **reply to every comment** on GitHub explaining your decision.
 
 ## Step 1: Identify the PR
 
@@ -46,7 +46,7 @@ Fetch **three sources** of comments (the gh CLI doesn't merge them):
    gh pr view $PR_NUMBER --json reviews --jq '.reviews[] | {author: .author.login, state: .state, body: .body, submittedAt: .submittedAt}'
    ```
 
-3. **Inline review comments** (attached to specific lines — the important ones):
+3. **Inline review comments** (attached to specific lines, the important ones):
    ```bash
    # Get all comments with their resolution status
    gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments --paginate --jq '.[] | {id: .id, author: .user.login, path: .path, line: .line, original_line: .original_line, diff_hunk: .diff_hunk, body: .body, in_reply_to_id: .in_reply_to_id, created_at: .created_at, reactions: .reactions}'
@@ -95,7 +95,7 @@ For **every** review comment or suggestion, evaluate it against these criteria:
 - Is generic boilerplate that ignores the specific context (common with Copilot reviews)
 - Suggests "best practices" that don't apply to the actual architecture
 - Proposes unnecessary abstraction/refactoring that adds complexity without clear benefit
-- Recommends deprecated or outdated patterns for the repo's stack (check the language version and framework docs — suggestions based on old idioms should be rejected)
+- Recommends deprecated or outdated patterns for the repo's stack (check the language version and framework docs; suggestions based on old idioms should be rejected)
 - Is cosmetic bikeshedding with no meaningful impact
 - Conflicts with existing codebase conventions
 - Suggests changes that would break other functionality
@@ -213,8 +213,8 @@ gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments/{comment_id}/replies \
 
 Important:
 - Only reply to **top-level** comments in a thread (`in_reply_to_id` is null)
-- Skip comments that are themselves replies — they're part of an existing thread
-- Skip comments marked as ALREADY RESOLVED — don't reply again to fixed issues
+- Skip comments that are themselves replies: they're part of an existing thread
+- Skip comments marked as ALREADY RESOLVED: don't reply again to fixed issues
 
 For **top-level PR comments** that aren't inline review comments, reply using:
 ```bash
@@ -223,7 +223,7 @@ gh pr comment $PR_NUMBER --body "Your reply here"
 
 ### Reply tone and content
 
-**For accepted suggestions — simple/obvious fixes (typos, missing imports, small naming tweaks):**
+**For simple, obvious accepted suggestions (typos, missing imports, small naming tweaks):**
 Keep it short. No need to explain what's self-evident.
 ```
 Fixed.
@@ -232,10 +232,10 @@ Fixed.
 Good catch, fixed.
 ```
 
-**For accepted suggestions — substantive changes:**
+**For substantive accepted suggestions:**
 Briefly acknowledge what was improved and why it matters. 2-3 sentences max.
 ```
-Done. Switched to `[weak self]` here — the closure was capturing self strongly
+Done. Switched to `[weak self]` here; the closure was capturing self strongly
 and could retain the view controller after dismissal.
 ```
 ```
@@ -243,11 +243,11 @@ Added the nil coalescing. The API can return null for this field despite the
 docs saying otherwise, which would crash downstream.
 ```
 ```
-Good call — wrapped the DB query in a transaction. Concurrent writes to that
+Good call, wrapped the DB query in a transaction. Concurrent writes to that
 table could absolutely cause a partial update.
 ```
 
-**For rejected suggestions — always explain why:**
+**For rejected suggestions, always explain why:**
 Be clear and respectful, but direct. Don't be apologetic or wishy-washy. Give the actual technical reason. 2-4 sentences max.
 ```
 Skipping this one. The suggested guard clause would add an early return before
@@ -256,16 +256,16 @@ The current flow is intentional.
 ```
 ```
 Respectfully disagree. `async let` is the right pattern for these two independent
-calls — a TaskGroup would add complexity with no benefit since we know the exact
+calls. A TaskGroup would add complexity with no benefit since we know the exact
 number of tasks at compile time.
 ```
 ```
 This suggests a pattern that's outdated for the version we're targeting. With
-structured concurrency, we don't need to manually manage the dispatch queue —
+structured concurrency, we don't need to manually manage the dispatch queue:
 the actor already provides that serialization guarantee.
 ```
 ```
-The suggested `useMemo` here would actually hurt — the dependency array changes
+The suggested `useMemo` here would actually hurt: the dependency array changes
 on every render because of the inline object. The current implementation is
 already cheap enough that memoization adds overhead for no gain.
 ```
@@ -280,8 +280,8 @@ deciding. @[author] thoughts?
 ### Rules for replies
 - **Never write walls of text.** Keep replies concise and scannable.
 - **Never be condescending.** The reviewer took time to review your code.
-- **Always give the real reason** for rejections — not "I prefer it this way" but the actual technical justification.
-- **Don't explain the obvious.** If you fixed a typo, just say "Fixed." Don't write a paragraph about it.
+- **Always give the real reason** for rejections: not "I prefer it this way" but the actual technical justification.
+- **Don't explain the obvious.** If you fixed a typo, say "Fixed." Don't write a paragraph about it.
 - **Use code references** when they help (backtick formatting for symbol names, patterns, etc.)
 - **Batch awareness:** If multiple comments point at the same underlying issue, reply to the first one with the full explanation and reply to the others with "See reply above" or similar.
 
@@ -322,13 +322,13 @@ COMMENT+="All changes pushed in [commit SHA short]."
 gh pr comment $PR_NUMBER --body "$COMMENT"
 ```
 
-Note: Don't thank bot reviewers (Copilot, Vercel, etc.) — only thank actual humans who took time to review.
+Note: Don't thank bot reviewers (Copilot, Vercel, etc.); only thank actual humans who took time to review.
 
 ## Important rules
 
 - **Never blindly implement all comments.** That defeats the entire purpose.
-- **Read the actual code around each suggestion** before deciding — context is everything.
-- **Check git blame / history** if a comment questions why something was done a certain way — there may be a good reason.
+- **Read the actual code around each suggestion** before deciding: context matters.
+- **Check git blame / history** if a comment questions why something was done a certain way: there may be a good reason.
 - **Prefer minimal, surgical changes** over rewrites.
 - **If a suggestion is good but the proposed implementation is wrong**, implement the *intent* correctly rather than copy-pasting the suggested code.
 - When in doubt, **reject and flag** rather than implement something you're unsure about.

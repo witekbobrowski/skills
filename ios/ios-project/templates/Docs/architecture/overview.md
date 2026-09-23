@@ -4,11 +4,11 @@
 
 ## Layers
 
-- **App target (`APPNAME/`)** — SwiftUI screens, app-specific stores and
+- **App target (`APPNAME/`)**: SwiftUI screens, app-specific stores and
   orchestration, dependency wiring in `APPNAMEApp.swift`.
-- **`Packages/Modules` → `DesignSystem`** — shared SwiftUI primitives (colors,
+- **`Packages/Modules` → `DesignSystem`**: shared SwiftUI primitives (colors,
   typography, components). No business logic.
-- **`Packages/Modules` → `Sources/Integrations/<Name>`** — one target per
+- **`Packages/Modules` → `Sources/Integrations/<Name>`**: one target per
   external system (HealthKit, network APIs, …). Only I/O and `Sendable`
   mirrors; app-specific rules stay in the app target.
 

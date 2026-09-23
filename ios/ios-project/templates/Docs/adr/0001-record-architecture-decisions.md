@@ -13,6 +13,6 @@ We document **non-trivial** architectural and product-technical choices as **Arc
 
 ## Consequences
 
-- **Positive** — Shared memory for “why”; easier onboarding; less rehashing of settled tradeoffs.
-- **Positive** — ADRs can be superseded explicitly without deleting history.
-- **Cost** — Small ongoing discipline: when a choice materially affects structure or behavior, add or update an ADR instead of relying only on code comments.
+- **Positive**: shared memory for “why”; easier onboarding; less rehashing of settled tradeoffs.
+- **Positive**: ADRs can be superseded explicitly without deleting history.
+- **Cost**: small ongoing discipline. When a choice materially affects structure or behavior, add or update an ADR instead of relying only on code comments.

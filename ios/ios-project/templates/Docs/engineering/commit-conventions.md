@@ -36,13 +36,13 @@ This repository uses **[Conventional Commits](https://www.conventionalcommits.or
 
 Use a scope in parentheses when it helps scan history:
 
-- `feat(sync): …` — Health / Strava / bidirectional sync
-- `feat(rules): …` — Workflow or rule engine
-- `feat(triage): …` — Triage UI
-- `feat(healthkit): …` — Apple Health integration
-- `feat(strava): …` — Strava integration
-- `docs(adr): …` — Architecture decision records
-- `build(spm): …` — `Packages/Modules` or local SPM
+- `feat(sync): …`: Health / Strava / bidirectional sync
+- `feat(rules): …`: workflow or rule engine
+- `feat(triage): …`: triage UI
+- `feat(healthkit): …`: Apple Health integration
+- `feat(strava): …`: Strava integration
+- `docs(adr): …`: architecture decision records
+- `build(spm): …`: `Packages/Modules` or local SPM
 
 Omit the scope when the change is broad or obvious from the subject.
 

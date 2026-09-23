@@ -5,7 +5,7 @@ Each capability = entitlement keys in `Config/<AppName>.entitlements` +
 Never edit the pbxproj for capabilities.
 
 Usage descriptions must be real sentences about *this* app (what is read,
-what is written, why) — derive them from the vision/pitch, not boilerplate.
+what is written, why), derived from the vision/pitch, not boilerplate.
 Apple rejects vague ones.
 
 ## HealthKit
@@ -24,7 +24,7 @@ INFOPLIST_KEY_NSHealthUpdateUsageDescription = <why the app writes Health data>
 OTHER_LDFLAGS = $(inherited) -framework HealthKit
 ```
 Also: create `Sources/Integrations/AppleHealth` as the integration target.
-Background delivery only works on a physical device — note that in AGENTS.md.
+Background delivery only works on a physical device; record that in AGENTS.md.
 
 ## CloudKit
 
@@ -49,7 +49,7 @@ Background delivery only works on a physical device — note that in AGENTS.md.
 <array><string>group.<bundle.id></string></array>
 ```
 
-The entitlement is only step one — the shared-defaults access point,
+The entitlement is only step one: the shared-defaults access point,
 store-file placement, and consumer sweep are the `ios-app-group`
 skill's job. Suggest running it after the scaffold when this capability
 is selected.
@@ -72,7 +72,7 @@ Common modes: `fetch`, `processing`, `remote-notification`, `audio`,
 
 ## Location / Camera / Microphone / Contacts / Photos
 
-No entitlement — usage description keys in Shared.xcconfig only, e.g.:
+No entitlement: usage description keys in Shared.xcconfig only, e.g.:
 ```
 INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = <why>
 INFOPLIST_KEY_NSCameraUsageDescription = <why>

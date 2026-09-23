@@ -1,12 +1,12 @@
 # The truth-store pattern
 
 Generalized from floda-ios's `Store` package. `Workout` is the worked
-example throughout — substitute the target app's entity. The pattern's two
+example throughout; substitute the target app's entity. The pattern's two
 load-bearing ideas, learned the hard way in Stoic:
 
-1. **The flexible layer** — named projections make the struct layer bend
+1. **The flexible layer**: named projections make the struct layer bend
    (adding a shape is easier than bypassing the layer).
-2. **The closed back door** — internal models make bypassing a *compile
+2. **The closed back door**: internal models make bypassing a *compile
    error*, not a policy.
 
 Either alone fails: a rigid layer justifies bypassing, and an open back
@@ -15,7 +15,7 @@ door removes the pressure to fix the layer.
 ## Layout
 
 The store is one SPM library target depending only on Foundation, SwiftData,
-and (if hashing) CryptoKit — never on UI, never on provider SDKs
+and (if hashing) CryptoKit; never on UI, never on provider SDKs
 (HealthKit etc. stay behind mirror types at the app boundary).
 
 ```
@@ -41,9 +41,9 @@ and timing budgets; package tests own mechanics needing `@testable`.
 
 All public types are `Sendable` value types. Snapshot structs use
 `public let` everywhere with a memberwise `public init` (for mapping and
-tests) — mutation happens only through command types. Enums persisting as
+tests); mutation happens only through command types. Enums persisting as
 raw strings are non-failable and decode unknown raw values to
-`.unknown(raw)` — never crash, never drop (forward tolerance for rows
+`.unknown(raw)`, never crash, never drop (forward tolerance for rows
 written by newer app versions):
 
 ```swift
@@ -64,12 +64,12 @@ The truth entity struct carries:
 - **Identity + sync fields**: `id: UUID`, `createdAt`, `updatedAt`,
   `revision: Int` (monotonic per-row edit counter), `deletedAt: Date?`
   (soft-delete tombstone). See `sync-readiness.md`.
-- **Summary scalars in base units** (meters, seconds, kilocalories, bpm —
+- **Summary scalars in base units** (meters, seconds, kilocalories, bpm,
   whatever the domain's SI-ish bases are). Conversion only at the
   formatting edge.
 - **Denormalized row flags** (e.g. `hasRoute`) so list queries never touch
   relationships.
-- **Series descriptors, never payloads** — heavy blob `Data` is fetched on
+- **Series descriptors, never payloads**: heavy blob `Data` is fetched on
   demand via the store, it never rides struct mapping.
 
 ## Internal models and mapping
@@ -80,7 +80,7 @@ Making models public would make SwiftData public API (ends swappability),
 scatter faulting discipline, and turn the schema into a compatibility
 surface.
 
-Mapping is symmetric — `init(model:)` / `apply(to:)` per entity — with
+Mapping is symmetric: `init(model:)` / `apply(to:)` per entity, with
 mechanical round-trip tests per entity (`struct → model → struct` equals
 identity). Mapping cost rules:
 
@@ -118,7 +118,7 @@ never edited.
 
 Custom query needs are served two ways, and only two:
 
-1. **Parameterized domain specs** — a filter value compiled internally to
+1. **Parameterized domain specs**: a filter value compiled internally to
    a `FetchDescriptor` (predicate + sort + `fetchLimit` +
    `propertiesToFetch`).
 2. **Named projections** added deliberately inside the package (below).
@@ -141,11 +141,11 @@ public struct Page<Element: Sendable>: Sendable {
 
 Pagination is **keyset** (opaque cursor of the last row's sort key + id);
 offset pagination is banned at scale. New sort orders land together with
-their `#Index` — never without.
+their `#Index`, never without.
 
 ## Named projections and faulting rules
 
-The store serves a small, curated, **closed** set of purpose-built shapes —
+The store serves a small, curated, **closed** set of purpose-built shapes:
 GraphQL-style flexibility without the open query surface. Every projection
 is total for its type (no half-populated fields), has one documented
 consumer surface, and its own optimized fetch path. Resist ad-hoc per-view
@@ -154,13 +154,13 @@ shapes: extend a projection or add one deliberately.
 SwiftData faults like Core Data, so:
 
 - Scalars materialize per object (cheap): a projection's shape and its
-  `propertiesToFetch` list are the **same list** — no secondary faults.
-- Every relationship access is its own fault — the N+1 trap. Page-scale
+  `propertiesToFetch` list are the **same list**: no secondary faults.
+- Every relationship access is its own fault: the N+1 trap. Page-scale
   projections (`Summary`) touch **no relationships** (denormalize what
   rows need, e.g. `hasRoute`); relationship-bearing projections (`Detail`)
   are single-object or use `relationshipKeyPathsForPrefetching`.
 
-Typical set: `Entity.Summary` (list rows, `propertiesToFetch`-backed —
+Typical set: `Entity.Summary` (list rows, `propertiesToFetch`-backed;
 slim projections do *less* I/O than faulted classes), `Entity.Detail`
 (single object composing stats, series descriptors, links, log slice),
 plus internal-facing shapes (e.g. `FingerprintCandidate`).
@@ -169,7 +169,7 @@ plus internal-facing shapes (e.g. `FingerprintCandidate`).
 
 Commands in, structs out. The actor resolves id → model, verifies
 `expectedRevision` (stale-write guard), applies, saves, bumps counters,
-appends the matching log row — one transaction:
+appends the matching log row, one transaction:
 
 ```swift
 public struct WorkoutEdit: Hashable, Sendable {
@@ -189,15 +189,15 @@ double-optionals. Every mutation carries a `trigger` for the audit trail
 
 Two `ModelConfiguration`s in one container:
 
-- **Truth** — the durable, app-owned record of what happened.
+- **Truth**: the durable, app-owned record of what happened.
   Self-sufficient: once a record is absorbed into truth, it survives cache
   purges and provider-history loss.
-- **Local-only cache** — one generic `CachedProviderRecord` model
+- **Local-only cache**: one generic `CachedProviderRecord` model
   (provider, externalID, revision token, mirror payload blob) that is
-  **safe to wipe at any time**. `#Unique` on (provider, externalID) —
+  **safe to wipe at any time**. `#Unique` on (provider, externalID):
   one row per external record.
 
-Cross-configuration references are **UUIDs, never relationships** —
+Cross-configuration references are **UUIDs, never relationships**:
 SwiftData cannot relate across configurations, and that structural
 constraint is the point. Rollups and sync anchors also live in the wipeable
 configuration: losing an anchor costs one re-scan, never data.
@@ -207,7 +207,7 @@ provider, externalID, raw provider type (kept here, not only in the cache,
 so classification stays recomputable after a wipe), a **role**
 (`imported`, `exported`, `splitFrom`, `mergedFrom`, `replacedBy`) and a
 per-link sync state (`pending`/`inFlight`/`synced`/`skipped`/`error`/
-`needsReview`). Direction lives in the role field, never in a type name —
+`needsReview`). Direction lives in the role field, never in a type name;
 providers are targets as well as sources. Several truth rows may share
 one external record (user merge/split), which is why strict uniqueness
 lives on the cache, not the links.
@@ -219,7 +219,7 @@ mirror type into a `ProviderRecord` (externalID, revision token, raw type,
 stamped identity if present, mirror payload, and a candidate already in
 base units). The store never imports provider SDKs.
 
-1. **Echo check first — a model invariant, not a heuristic.** If the
+1. **Echo check first: a model invariant, not a heuristic.** If the
    record carries our stamped identity, or an `exported` link exists for
    (provider, externalID), it is our own write echoing back → update link
    state, upsert cache, return `.echoSuppressed`. Fingerprinting never
@@ -227,12 +227,12 @@ base units). The store never imports provider SDKs.
 2. **Known-record check.** An import-role link exists: revision unchanged →
    `.unchanged`; changed and not user-modified → apply candidate,
    `.updated`; changed and user-modified → link `state = .needsReview`,
-   cache holds the proposal, `.routedToTriage` — no truth field moves.
+   cache holds the proposal, `.routedToTriage`; no truth field moves.
 3. **Fingerprint dedupe (unstamped only).** Normalized start/end, type,
    duration bucket, content hash → link to the existing truth row
    (`.linkedToExisting`); ambiguous (≥2 candidates) → create anyway with
    `needsReview` (honesty over silent merging).
-4. **Create** — new truth row + series rows + `imported` link + cache
+4. **Create**: new truth row + series rows + `imported` link + cache
    upsert + log row.
 
 **Echo suppression via identity stamping**: every write *to* a provider
@@ -255,10 +255,10 @@ relatedIDs as **plain UUIDs, no relationships** (history must survive
 deletions), optional provider, `trigger`, small Codable detail, optional
 `batchID`. Three scopes with field validity asserted in tests:
 subject-scoped, provider-scoped (connect/disconnect, auth revoked, token
-expired — the classic silent sync killer, logged and surfaced), and batch
+expired: the classic silent sync killer, logged and surfaced), and batch
 summaries (appended exactly once at batch end; UI collapses by batchID).
 
-Explicitly an **audit log, not event sourcing** — nothing ever derives
+Explicitly an **audit log, not event sourcing**: nothing ever derives
 state from it. Live progress is store state, never log rows. Append-only
 rows are conflict-free by construction, so the log can sync E2E later.
 
@@ -268,7 +268,7 @@ rows are conflict-free by construction, so the log can sync E2E later.
   future change is a new schema version + a **lightweight** stage. Heavy
   transforms ride payload format versions (migrate-on-read,
   rewrite-on-write) so launch stays O(1).
-- `cloudKitDatabase: .none` on every configuration — no automatic mirror,
+- `cloudKitDatabase: .none` on every configuration: no automatic mirror,
   ever (see `sync-readiness.md`).
 - Every query pattern ships with its `#Index`.
 - Rare provider fields stay in the cache's mirror payload rather than
@@ -279,4 +279,4 @@ rows are conflict-free by construction, so the log can sync E2E later.
 `@Observable` stores in the app target hold struct pages and talk to the
 facades; **no `@Query` and no models in app code**. File protection
 `CompleteUntilFirstUserAuthentication` when background processing must
-write while the device is locked (deliberate trade — record it).
+write while the device is locked (deliberate trade, record it).

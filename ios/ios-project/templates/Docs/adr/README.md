@@ -1,6 +1,6 @@
 # Architecture Decision Records (ADRs)
 
-This folder holds **ADRs**: short, dated documents that capture a significant architectural or product-technical choice—**why** we picked a path, not only **what** the code does.
+This folder holds **ADRs**: short, dated documents that capture a significant architectural or product-technical choice, **why** we picked a path, not only **what** the code does.
 
 ## Filename convention
 
@@ -15,11 +15,11 @@ Add new ADRs as:
 
 Each ADR is a small markdown file with:
 
-1. **Title** — `NNNN` plus imperative summary (same as filename stem).
-2. **Status** — e.g. Proposed, Accepted, Superseded by `NNNN-other.md`.
-3. **Context** — Forces at play: constraints, goals, unknowns.
-4. **Decision** — What we will do (one clear statement).
-5. **Consequences** — Tradeoffs, follow-up work, and risks we accept.
+1. **Title**: `NNNN` plus imperative summary (same as filename stem).
+2. **Status**: e.g. Proposed, Accepted, Superseded by `NNNN-other.md`.
+3. **Context**: forces at play: constraints, goals, unknowns.
+4. **Decision**: what we will do (one clear statement).
+5. **Consequences**: tradeoffs, follow-up work, and risks we accept.
 
 Optional: **Alternatives considered** in a short list if future readers would otherwise re-litigate the same debate.
 
